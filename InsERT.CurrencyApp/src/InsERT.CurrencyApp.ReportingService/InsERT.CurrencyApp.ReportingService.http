@@ -1,0 +1,6 @@
+@InsERT.CurrencyApp.ReportingService_HostAddress = http://localhost:5248
+
+GET {{InsERT.CurrencyApp.ReportingService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

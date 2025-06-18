@@ -1,0 +1,6 @@
+@InsERT.CurrencyApp.ApiGateway_HostAddress = http://localhost:5117
+
+GET {{InsERT.CurrencyApp.ApiGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
