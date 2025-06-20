@@ -1,9 +1,9 @@
 ﻿namespace InsERT.CurrencyApp.CurrencyService.Configuration;
 
-public class AppSettings(IConfiguration config)
+public class AppSettings
 {
-    public string ConnectionString { get; } = config.GetConnectionString("Postgres")
-            ?? throw new ArgumentNullException("ConnectionStrings:Postgres", "Missing connection string 'Postgres' in configuration.");
-    public int FetchIntervalMinutes { get; } = config.GetValue<int?>("FetchIntervalMinutes")
-            ?? throw new ArgumentNullException("FetchIntervalMinutes", "Missing 'FetchIntervalMinutes' in configuration.");
+    public string ConnectionString { get; set; } = string.Empty;
+    public int FetchIntervalMinutes { get; set; }
+    public NbpClientSettings NbpClient { get; set; } = new();
 }
+
