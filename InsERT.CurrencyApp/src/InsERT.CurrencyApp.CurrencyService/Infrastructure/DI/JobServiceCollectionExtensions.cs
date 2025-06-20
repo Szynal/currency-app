@@ -1,19 +1,12 @@
-﻿using InsERT.CurrencyApp.CurrencyService.Configuration;
+﻿using InsERT.CurrencyApp.CurrencyService.Infrastructure.Nbp;
 
 namespace InsERT.CurrencyApp.CurrencyService.Infrastructure.DI;
 
-public static class JobServiceCollectionExtensions
+public static class InfrastructureServiceCollectionExtensions
 {
-    public static IServiceCollection AddJobScheduling(
-        this IServiceCollection services,
-        AppSettings settings)
+    public static IServiceCollection AddHostedJobs(this IServiceCollection services)
     {
-        services.AddHostedService<CurrencyRateFetcher>();
-
-        // posiible Hangfire / Quartz in future ... 
-        // services.AddHangfire(...)
-        // services.AddQuartz(...)
-
+        services.AddScoped<INbpCurrencyClient, NbpCurrencyClient>();
         return services;
     }
 }
