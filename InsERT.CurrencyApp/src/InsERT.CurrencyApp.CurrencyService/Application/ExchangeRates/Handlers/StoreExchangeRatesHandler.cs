@@ -1,7 +1,7 @@
 ﻿using InsERT.CurrencyApp.Abstractions.CQRS.Commands;
 using InsERT.CurrencyApp.CurrencyService.Application.ExchangeRates.Commands;
+using InsERT.CurrencyApp.CurrencyService.DataAccess;
 using InsERT.CurrencyApp.CurrencyService.Domain;
-using InsERT.CurrencyApp.CurrencyService.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace InsERT.CurrencyApp.CurrencyService.Application.ExchangeRates.Handlers;
@@ -12,29 +12,35 @@ public class StoreExchangeRatesHandler(CurrencyDbContext db) : ICommandHandler<S
 
     public async Task<int> HandleAsync(StoreExchangeRatesCommand command, CancellationToken cancellationToken = default)
     {
+        if (command?.Table?.Rates is null || command.Table.Rates.Count == 0)
+            return 0;
+
         var table = command.Table;
         var effectiveDate = DateOnly.Parse(table.EffectiveDate);
-        int added = 0;
+        var incomingCodes = table.Rates.Select(r => r.Code).ToHashSet();
 
-        foreach (var rate in table.Rates)
-        {
-            bool exists = await _db.ExchangeRates.AnyAsync(e =>
-                e.Code == rate.Code && e.EffectiveDate == effectiveDate, cancellationToken);
+        var existingCodes = await _db.ExchangeRates
+            .Where(e => e.EffectiveDate == effectiveDate && incomingCodes.Contains(e.Code))
+            .Select(e => e.Code)
+            .ToListAsync(cancellationToken);
 
-            if (!exists)
+        var newRates = table.Rates
+            .Where(r => !existingCodes.Contains(r.Code))
+            .Select(r => new ExchangeRate
             {
-                _db.ExchangeRates.Add(new ExchangeRate
-                {
-                    Code = rate.Code,
-                    Currency = rate.Currency,
-                    Rate = rate.Mid,
-                    EffectiveDate = effectiveDate
-                });
-                added++;
-            }
+                Code = r.Code,
+                Currency = r.Currency,
+                Rate = r.Mid,
+                EffectiveDate = effectiveDate
+            })
+            .ToList();
+
+        if (newRates.Count != 0)
+        {
+            _db.ExchangeRates.AddRange(newRates);
+            await _db.SaveChangesAsync(cancellationToken);
         }
 
-        await _db.SaveChangesAsync(cancellationToken);
-        return added;
+        return newRates.Count;
     }
 }
