@@ -2,9 +2,8 @@
 
 public static class ApiServiceCollectionExtensions
 {
-    public static IServiceCollection AddApiServices(
-        this IServiceCollection services,
-        AppSettings settings)
+    public static IServiceCollection AddApi(
+        this IServiceCollection services)
     {
         services.AddCors(options =>
         {
