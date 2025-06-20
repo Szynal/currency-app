@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsERT.CurrencyApp.Reportin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsERT.CurrencyApp.Abstractions", "src\InsERT.CurrencyApp.Abstractions\InsERT.CurrencyApp.Abstractions.csproj", "{7060212D-B508-4F36-B222-9E62A8E8DFB7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsERT.CurrencyApp.CurrencyService.Tests", "src\InsERT.CurrencyApp.CurrencyService.Tests\InsERT.CurrencyApp.CurrencyService.Tests.csproj", "{26A3D81F-D0C5-3912-EC4B-DD0AE4A1BE17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{7060212D-B508-4F36-B222-9E62A8E8DFB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7060212D-B508-4F36-B222-9E62A8E8DFB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7060212D-B508-4F36-B222-9E62A8E8DFB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26A3D81F-D0C5-3912-EC4B-DD0AE4A1BE17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26A3D81F-D0C5-3912-EC4B-DD0AE4A1BE17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26A3D81F-D0C5-3912-EC4B-DD0AE4A1BE17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26A3D81F-D0C5-3912-EC4B-DD0AE4A1BE17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

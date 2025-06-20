@@ -21,7 +21,8 @@ public sealed class GetExchangeRatesHandler(CurrencyDbContext dbContext) : IQuer
 
         if (!string.IsNullOrWhiteSpace(query.Code))
         {
-            exchangeRates = exchangeRates.Where(r => r.Code.Equals(query.Code, StringComparison.CurrentCultureIgnoreCase));
+            var normalizedCode = query.Code.ToLower();
+            exchangeRates = exchangeRates.Where(r => r.Code.ToLower() == normalizedCode);
         }
 
         return await exchangeRates

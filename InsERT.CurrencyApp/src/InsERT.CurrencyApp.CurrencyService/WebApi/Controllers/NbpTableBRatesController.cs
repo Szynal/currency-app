@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace InsERT.CurrencyApp.CurrencyService.WebApi.Controllers;
 
 [ApiController]
-[Route("rates")]
-public class RatesController(IQueryDispatcher dispatcher) : ControllerBase
+[Route("nbp/table-b/rates")]
+public class NbpTableBRatesController(IQueryDispatcher dispatcher) : ControllerBase
 {
     private readonly IQueryDispatcher _dispatcher = dispatcher;
 
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ExchangeRateDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAll(
         [FromQuery] DateOnly? date,
@@ -24,7 +24,7 @@ public class RatesController(IQueryDispatcher dispatcher) : ControllerBase
 
         if (!result.Any())
         {
-            return NoContent();
+            return NotFound($"No exchange rates found for code '{code}' in table B.");
         }
 
         return Ok(result);
