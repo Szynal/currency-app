@@ -1,55 +1,55 @@
-﻿using InsERT.CurrencyApp.Abstractions.CQRS.Dispatcher;
-using InsERT.CurrencyApp.CurrencyService.Application.ExchangeRates.Commands;
+﻿using InsERT.CurrencyApp.CurrencyService.Application.Services;
 using InsERT.CurrencyApp.CurrencyService.Configuration;
-using InsERT.CurrencyApp.CurrencyService.Infrastructure.Nbp;
+using Microsoft.Extensions.Options;
 
-namespace InsERT.CurrencyApp.CurrencyService.Infrastructure;
-
-public class CurrencyRateFetcher(
-    ILogger<CurrencyRateFetcher> logger,
-    IServiceProvider provider,
-    AppSettings settings) : BackgroundService
+public class CurrencyRateFetcher : BackgroundService
 {
-    private readonly ILogger<CurrencyRateFetcher> _logger = logger;
-    private readonly IServiceProvider _provider = provider;
-    private readonly TimeSpan _fetchInterval = TimeSpan.FromMinutes(settings.FetchIntervalMinutes);
+    private readonly ILogger<CurrencyRateFetcher> _logger;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly TimeSpan _interval;
+
+    public CurrencyRateFetcher(
+        ILogger<CurrencyRateFetcher> logger,
+        IServiceProvider serviceProvider,
+        IOptions<AppSettings> options)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+
+        if (options?.Value is null)
+            throw new ArgumentNullException(nameof(options));
+
+        _interval = TimeSpan.FromMinutes(options.Value.FetchIntervalMinutes);
+    }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("CurrencyRateFetcher started. Interval: {interval} minutes", _fetchInterval.TotalMinutes);
+        _logger.LogInformation("CurrencyRateFetcher started. Interval: {IntervalMinutes} minutes", _interval.TotalMinutes);
 
         while (!cancellationToken.IsCancellationRequested)
         {
+            _logger.LogInformation("CurrencyRateFetcher tick at {Time}", DateTimeOffset.Now);
+
             try
             {
-                _logger.LogInformation("CurrencyRateFetcher tick at {time}", DateTime.Now.ToString("HH:mm:ss"));
-
-                await using var scope = _provider.CreateAsyncScope();
-                var nbpClient = scope.ServiceProvider.GetRequiredService<INbpCurrencyClient>();
-                var dispatcher = scope.ServiceProvider.GetRequiredService<IDispatcher>();
-
-                var table = await nbpClient.GetLatestTableAsync(cancellationToken);
-
-                if (table is not null)
-                {
-                    var added = await dispatcher.SendAsync<StoreExchangeRatesCommand, int>(
-                        new StoreExchangeRatesCommand(table), cancellationToken);
-
-                    _logger.LogInformation("Saved {count} exchange rates for {date}", added, table.EffectiveDate);
-                }
-                else
-                {
-                    _logger.LogWarning("NBP returned no data.");
-                }
-
-
+                using var scope = _serviceProvider.CreateScope();
+                var job = scope.ServiceProvider.GetRequiredService<ICurrencyRateFetchJob>();
+                await job.FetchAndStoreAsync(cancellationToken);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "CurrencyRateFetcher failed");
+                _logger.LogError(ex, "CurrencyRateFetcher failed.");
             }
 
-            await Task.Delay(_fetchInterval, cancellationToken);
+            try
+            {
+                await Task.Delay(_interval, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation("CurrencyRateFetcher was cancelled.");
+                break;
+            }
         }
     }
 }

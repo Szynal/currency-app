@@ -1,35 +1,43 @@
 ﻿using System.Text.Json;
-using InsERT.CurrencyApp.CurrencyService.Infrastructure.Nbp;
+using InsERT.CurrencyApp.Abstractions.Serialization;
+using InsERT.CurrencyApp.CurrencyService.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace InsERT.CurrencyApp.CurrencyService.Infrastructure.Nbp;
 
-public interface INbpCurrencyClient
+public class NbpCurrencyClient(
+    HttpClient httpClient,
+    ILogger<NbpCurrencyClient> logger,
+    IOptions<NbpClientSettings> options) : INbpCurrencyClient
 {
-    Task<NbpTable?> GetLatestTableAsync(CancellationToken ct);
-}
+    private readonly HttpClient _httpClient = httpClient;
+    private readonly ILogger<NbpCurrencyClient> _logger = logger;
+    private readonly Uri _endpoint = NbpUriFactory.BuildTableEndpoint(options.Value);
+    private static readonly JsonSerializerOptions JsonOptions = JsonSerializationProfiles.CaseInsensitive;
 
-public class NbpCurrencyClient : INbpCurrencyClient
-{
-    private const string Url = "https://api.nbp.pl/api/exchangerates/tables/B/?format=json";
-    private readonly IHttpClientFactory _http;
-
-    public NbpCurrencyClient(IHttpClientFactory http)
+    public async Task<NbpTable?> FetchLatestRatesTableAsync(CancellationToken ct)
     {
-        _http = http;
-    }
+        _logger.LogInformation("Calling NBP API: {Url}", _endpoint);
 
-    public async Task<NbpTable?> GetLatestTableAsync(CancellationToken ct)
-    {
-        var client = _http.CreateClient();
-        var response = await client.GetAsync(Url, ct);
-        response.EnsureSuccessStatusCode();
-
-        var json = await response.Content.ReadAsStringAsync(ct);
-        var data = JsonSerializer.Deserialize<List<NbpTable>>(json, new JsonSerializerOptions
+        try
         {
-            PropertyNameCaseInsensitive = true
-        });
+            var response = await _httpClient.GetAsync(_endpoint, ct);
+            response.EnsureSuccessStatusCode();
 
-        return data?.FirstOrDefault();
+            var json = await response.Content.ReadAsStringAsync(ct);
+            var data = JsonSerializer.Deserialize<List<NbpTable>>(json, JsonOptions);
+
+            return data?.FirstOrDefault();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request to NBP API failed.");
+            throw;
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Failed to deserialize response from NBP API.");
+            throw;
+        }
     }
 }
