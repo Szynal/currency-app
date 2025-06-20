@@ -7,15 +7,15 @@ using Moq;
 
 namespace InsERT.CurrencyApp.CurrencyService.Tests.WebApi.Controllers;
 
-public class RatesControllerTests
+public class NbpTableBRatesControllerTests
 {
     private readonly Mock<IQueryDispatcher> _dispatcherMock;
-    private readonly RatesController _controller;
+    private readonly NbpTableBRatesController _controller;
 
-    public RatesControllerTests()
+    public NbpTableBRatesControllerTests()
     {
         _dispatcherMock = new Mock<IQueryDispatcher>();
-        _controller = new RatesController(_dispatcherMock.Object);
+        _controller = new NbpTableBRatesController(_dispatcherMock.Object);
     }
 
     [Fact]
@@ -24,7 +24,7 @@ public class RatesControllerTests
         // Arrange
         var expected = new List<ExchangeRateDto>
         {
-            new() { Code = "USD", Currency = "US Dollar", Rate = 4.20m, EffectiveDate = DateOnly.FromDateTime(DateTime.Today) }
+            new() { Code = "XPF", Currency = "frank CFA BCEAO ", Rate = 0.006538m, EffectiveDate = DateOnly.FromDateTime(DateTime.Today) }
         };
 
         _dispatcherMock
@@ -54,7 +54,7 @@ public class RatesControllerTests
         var result = await _controller.GetAll(null, null);
 
         // Assert
-        Assert.IsType<NoContentResult>(result);
+        Assert.IsType<NotFoundObjectResult>(result);
     }
 
     [Fact]
