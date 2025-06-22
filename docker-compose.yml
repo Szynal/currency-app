@@ -1,0 +1,54 @@
+services:
+  currency-db:
+    image: postgres:16
+    container_name: currency-db
+    restart: always
+    environment:
+      POSTGRES_DB: currencydb        
+      POSTGRES_USER: currencyuser
+      POSTGRES_PASSWORD: currencypass
+    ports:
+      - "5432:5432"
+    volumes:
+      - currencydata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U currencyuser -d currencydb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  wallet-db:
+    image: postgres:16
+    container_name: wallet-db
+    restart: always
+    environment:
+      POSTGRES_DB: walletdb          
+      POSTGRES_USER: walletuser
+      POSTGRES_PASSWORD: walletpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - walletdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U walletuser -d walletdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  currency-service:
+    build:
+      context: .
+      dockerfile: src/InsERT.CurrencyApp.CurrencyService/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: "Host=currency-db;Port=5432;Database=currencydb;Username=currencyuser;Password=currencypass"
+    depends_on:
+      currency-db:
+        condition: service_healthy
+
+volumes:
+  currencydata:
+  walletdata:

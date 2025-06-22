@@ -27,13 +27,17 @@ You can find the current system architecture diagram on Miro:
 
 ---
 
+
 ## 🚀 Technologies
 
 - .NET 8 (ASP.NET Core Web API)
 - Docker & Docker Compose
-- REST API with OpenAPI (Swagger)
-- (Planned) EF Core + PostgreSQL, MediatR, Outbox Pattern
-- (Optional) Azure Service Bus, Hangfire, Ocelot Gateway
+- EF Core + PostgreSQL
+- CQRS with MediatR (planned)
+- Polly for HTTP resilience
+- REST API with Swagger
+- Testcontainers for integration testing
+- CI/CD via GitHub Actions (planned)
 
 ---
 
@@ -43,14 +47,25 @@ You can find the current system architecture diagram on Miro:
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
-### Run locally:
+### Run with Docker (recommended):
 
 ```bash
-cd InsERT.CurrencyApp/src/InsERT.CurrencyApp.CurrencyService
-dotnet run
+docker compose up --build
 ```
 
+## 🧪 Development Mode
+
+Currently, all microservices run in **`ASPNETCORE_ENVIRONMENT=Development`**.  
+This enables Swagger UI and other dev-only features.
+
 ---
+
+## 📘 Swagger & API Testing
+
+When services are running, Swagger UI is enabled and available at:
+
+- [`CurrencyService`](http://localhost:5000/swagger/index.html)
+- (Other services coming soon)
 
 # 💱 InsERT.CurrencyApp
 
