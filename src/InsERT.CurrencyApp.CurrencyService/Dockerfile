@@ -1,0 +1,31 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /app
+
+COPY Directory.Packages.props ./
+COPY InsERT.CurrencyApp.sln ./
+
+COPY src/ ./src/
+COPY tests/ ./tests/
+
+RUN dotnet restore InsERT.CurrencyApp.sln
+
+COPY . .
+
+# Optional: Run tests 
+# RUN dotnet test tests/InsERT.CurrencyApp.CurrencyService.Tests/InsERT.CurrencyApp.CurrencyService.Tests.csproj --no-restore --no-build -c Release
+
+WORKDIR /app/src/InsERT.CurrencyApp.CurrencyService
+RUN dotnet publish -c Release -o /publish --no-restore
+
+# Runtime Stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+
+ENV ASPNETCORE_URLS=http://+:8080
+ENV DOTNET_RUNNING_IN_CONTAINER=true
+
+COPY --from=build /publish ./
+
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "InsERT.CurrencyApp.CurrencyService.dll"]
