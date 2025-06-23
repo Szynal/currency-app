@@ -11,18 +11,20 @@ public static class DataAccessModule
 {
     public static IServiceCollection AddDataAccess(this IServiceCollection services)
     {
-        services.AddDbContext<WalletDbContext>((sp, options) =>
+        services.AddDbContext<WalletDbContext>((serviceProvider, options) =>
         {
-            var settings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
-            options.UseNpgsql(settings.WalletDbConnectionString, npgsql =>
+            var settings = serviceProvider.GetRequiredService<IOptions<AppSettings>>().Value;
+
+            options.UseNpgsql(settings.WalletDbConnectionString, npgsqlOptions =>
             {
-                npgsql.EnableRetryOnFailure(3);
-                npgsql.CommandTimeout(10);
+                npgsqlOptions.EnableRetryOnFailure(maxRetryCount: 3);
+                npgsqlOptions.CommandTimeout(10);
             });
         });
 
         services.AddHealthChecks().AddNpgSql(
-            connectionStringFactory: sp => sp.GetRequiredService<IOptions<AppSettings>>().Value.WalletDbConnectionString,
+            connectionStringFactory: sp =>
+                sp.GetRequiredService<IOptions<AppSettings>>().Value.WalletDbConnectionString,
             name: "wallet-db",
             failureStatus: HealthStatus.Unhealthy,
             tags: ["db", "postgres", "wallet"]);

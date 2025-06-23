@@ -4,9 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InsERT.CurrencyApp.WalletService.Infrastructure.DataAccess;
 
-public sealed class WalletRepository(WalletDbContext dbContext) : IWalletRepository
+public sealed class WalletRepository : IWalletRepository
 {
-    private readonly WalletDbContext _dbContext = dbContext;
+    private readonly WalletDbContext _dbContext;
+
+    public WalletRepository(WalletDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
     public async Task<Wallet?> GetByIdAsync(Guid walletId, CancellationToken cancellationToken = default)
     {
@@ -26,6 +31,11 @@ public sealed class WalletRepository(WalletDbContext dbContext) : IWalletReposit
     public async Task AddAsync(Wallet wallet, CancellationToken cancellationToken = default)
     {
         await _dbContext.Wallets.AddAsync(wallet, cancellationToken);
+    }
+
+    public void AddBalance(WalletBalance balance)
+    {
+        _dbContext.WalletBalances.Add(balance);
     }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)

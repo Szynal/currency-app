@@ -3,17 +3,20 @@ using System;
 using InsERT.CurrencyApp.WalletService.Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace InsERT.CurrencyApp.WalletService.Migrations
+namespace InsERT.CurrencyApp.WalletService.DataAccess.Migrations
 {
     [DbContext(typeof(WalletDbContext))]
-    partial class WalletDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250623162822_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +41,7 @@ namespace InsERT.CurrencyApp.WalletService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Wallets");
+                    b.ToTable("Wallets", (string)null);
                 });
 
             modelBuilder.Entity("InsERT.CurrencyApp.WalletService.Domain.Entities.WalletBalance", b =>
@@ -48,14 +51,11 @@ namespace InsERT.CurrencyApp.WalletService.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
-                        .HasPrecision(18, 4)
                         .HasColumnType("numeric(18,4)");
 
                     b.Property<string>("CurrencyCode")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("character(3)")
-                        .IsFixedLength();
+                        .HasColumnType("char(3)");
 
                     b.Property<Guid>("WalletId")
                         .HasColumnType("uuid");
@@ -65,16 +65,18 @@ namespace InsERT.CurrencyApp.WalletService.Migrations
                     b.HasIndex("WalletId", "CurrencyCode")
                         .IsUnique();
 
-                    b.ToTable("WalletBalances");
+                    b.ToTable("WalletBalances", (string)null);
                 });
 
             modelBuilder.Entity("InsERT.CurrencyApp.WalletService.Domain.Entities.WalletBalance", b =>
                 {
-                    b.HasOne("InsERT.CurrencyApp.WalletService.Domain.Entities.Wallet", null)
+                    b.HasOne("InsERT.CurrencyApp.WalletService.Domain.Entities.Wallet", "Wallet")
                         .WithMany("Balances")
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("InsERT.CurrencyApp.WalletService.Domain.Entities.Wallet", b =>

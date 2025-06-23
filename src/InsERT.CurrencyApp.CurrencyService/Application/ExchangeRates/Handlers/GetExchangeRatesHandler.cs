@@ -1,6 +1,6 @@
 ﻿using InsERT.CurrencyApp.Abstractions.CQRS.Queries;
-using InsERT.CurrencyApp.CurrencyService.Application.ExchangeRates.Models;
-using InsERT.CurrencyApp.CurrencyService.Application.ExchangeRates.Queries;
+using InsERT.CurrencyApp.Abstractions.Currency.Models;
+using InsERT.CurrencyApp.Abstractions.Currency.Queries;
 using InsERT.CurrencyApp.CurrencyService.DataAccess;
 using Microsoft.EntityFrameworkCore;
 

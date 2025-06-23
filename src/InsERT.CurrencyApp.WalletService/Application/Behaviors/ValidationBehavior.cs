@@ -7,15 +7,19 @@ public interface IValidationBehavior
     Task ValidateAsync<T>(T request, CancellationToken cancellationToken = default);
 }
 
-public sealed class ValidationBehavior(IServiceProvider serviceProvider) : IValidationBehavior
+public sealed class ValidationBehavior : IValidationBehavior
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IServiceProvider _serviceProvider;
+
+    public ValidationBehavior(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
 
     public async Task ValidateAsync<T>(T request, CancellationToken cancellationToken = default)
     {
-        var validatorType = typeof(IValidator<>).MakeGenericType(typeof(T));
-
-        if (_serviceProvider.GetService(validatorType) is not IValidator<T> validator)
+        var validator = _serviceProvider.GetService<IValidator<T>>();
+        if (validator is null)
             return;
 
         var result = await validator.ValidateAsync(request, cancellationToken);

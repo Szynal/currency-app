@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace InsERT.CurrencyApp.WalletService.Migrations
+namespace InsERT.CurrencyApp.WalletService.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -30,8 +30,8 @@ namespace InsERT.CurrencyApp.WalletService.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     WalletId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CurrencyCode = table.Column<string>(type: "character(3)", fixedLength: true, maxLength: 3, nullable: false),
-                    Amount = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: false)
+                    CurrencyCode = table.Column<string>(type: "char(3)", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(18,4)", nullable: false)
                 },
                 constraints: table =>
                 {
