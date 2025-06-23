@@ -1,7 +1,7 @@
 ﻿namespace InsERT.CurrencyApp.WalletService.Application.DTOs;
 
-public class WalletBalanceDto
+public sealed record WalletBalanceDto
 {
-    public required string CurrencyCode { get; set; }
-    public decimal Amount { get; set; }
+    public string CurrencyCode { get; init; } = string.Empty;
+    public decimal Amount { get; init; }
 }

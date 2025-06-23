@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace InsERT.CurrencyApp.WalletService.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialWalletSchema : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,6 +16,7 @@ namespace InsERT.CurrencyApp.WalletService.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
@@ -28,9 +29,9 @@ namespace InsERT.CurrencyApp.WalletService.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CurrencyCode = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
-                    Amount = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: false),
-                    WalletId = table.Column<Guid>(type: "uuid", nullable: false)
+                    WalletId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CurrencyCode = table.Column<string>(type: "character(3)", fixedLength: true, maxLength: 3, nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,9 +45,10 @@ namespace InsERT.CurrencyApp.WalletService.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_WalletBalances_WalletId",
+                name: "IX_WalletBalances_WalletId_CurrencyCode",
                 table: "WalletBalances",
-                column: "WalletId");
+                columns: new[] { "WalletId", "CurrencyCode" },
+                unique: true);
         }
 
         /// <inheritdoc />

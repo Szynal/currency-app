@@ -7,22 +7,40 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Application\Abstractions\**" />
+	  <Content Remove="Application\Abstractions\**" />
+	  <EmbeddedResource Remove="Application\Abstractions\**" />
+	  <None Remove="Application\Abstractions\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Http.Polly" />
+		<PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 		<PackageReference Include="Polly" />
 		<PackageReference Include="Swashbuckle.AspNetCore" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Application\Commands\" />
-		<Folder Include="Application\Handlers\" />
+		<Folder Include="Application\Queries\GetWalletBalances\" />
 		<Folder Include="Domain\Enums\" />
-		<Folder Include="DataAccess\" />
+		<Folder Include="Infrastructure\HttpClients\" />
+		<Folder Include="Infrastructure\Resilience\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\InsERT.CurrencyApp.Abstractions\InsERT.CurrencyApp.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

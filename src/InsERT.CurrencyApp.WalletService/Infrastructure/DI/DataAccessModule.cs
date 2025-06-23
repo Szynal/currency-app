@@ -1,35 +1,34 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using InsERT.CurrencyApp.WalletService.Configuration;
+using InsERT.CurrencyApp.WalletService.Domain.Repositories;
+using InsERT.CurrencyApp.WalletService.Infrastructure.DataAccess;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
-using InsERT.CurrencyApp.WalletService.Configuration;
-using InsERT.CurrencyApp.WalletService.DataAccess;
-using InsERT.CurrencyApp.WalletService.Domain.Repositories;
 
-namespace InsERT.CurrencyApp.WalletService.Infrastructure.DI
+namespace InsERT.CurrencyApp.WalletService.Infrastructure.DI;
+
+public static class DataAccessModule
 {
-    public static class DataAccessModule
+    public static IServiceCollection AddDataAccess(this IServiceCollection services)
     {
-        public static IServiceCollection AddDataAccess(this IServiceCollection services)
+        services.AddDbContext<WalletDbContext>((sp, options) =>
         {
-            services.AddDbContext<WalletDbContext>((sp, options) =>
+            var settings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
+            options.UseNpgsql(settings.WalletDbConnectionString, npgsql =>
             {
-                var settings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
-                options.UseNpgsql(settings.ConnectionString);
+                npgsql.EnableRetryOnFailure(3);
+                npgsql.CommandTimeout(10);
             });
+        });
 
-            services.AddHealthChecks()
-                .AddNpgSql(
-                    connectionStringFactory: sp => sp.GetRequiredService<IOptions<AppSettings>>().Value.ConnectionString,
-                    name: "Postgres",
-                    failureStatus: HealthStatus.Unhealthy,
-                    tags: new[] { "db", "postgres" }
-                );
+        services.AddHealthChecks().AddNpgSql(
+            connectionStringFactory: sp => sp.GetRequiredService<IOptions<AppSettings>>().Value.WalletDbConnectionString,
+            name: "wallet-db",
+            failureStatus: HealthStatus.Unhealthy,
+            tags: ["db", "postgres", "wallet"]);
 
-            services.AddScoped<IWalletRepository, WalletRepository>();
+        services.AddScoped<IWalletRepository, WalletRepository>();
 
-            return services;
-        }
+        return services;
     }
 }
