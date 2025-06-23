@@ -2,84 +2,95 @@
 
 # CurrencyApp
 
-**CurrencyApp** is a microservice-based system built with .NET 8 for managing currency wallets and executing transactions using exchange rates from the National Bank of Poland (NBP) Table B.
+**CurrencyApp** is a modular microservice-based system built with **.NET 8** for managing currency wallets and executing transactions using exchange rates from the National Bank of Poland (NBP, Table B).
+
+---
 
 ## 🧱 Architecture
 
-The solution follows a modular microservices architecture, with domain-specific services and an API gateway.
+The solution follows a **domain-oriented microservices architecture** with bounded contexts and an API gateway.
 
-### Microservices:
+### Microservices
 
-| Service                               | Description                                                       |
-|---------------------------------------|-------------------------------------------------------------------|
-| `InsERT.CurrencyApp.WalletService`    | Manages wallets and their balances                               |
-| `InsERT.CurrencyApp.CurrencyService`  | Periodically fetches and stores exchange rates from NBP          |
-| `InsERT.CurrencyApp.TransactionService` | Handles deposits, withdrawals, and currency conversions          |
-| `InsERT.CurrencyApp.ReportingService` | Integrates with external systems to confirm transactions         |
-| `InsERT.CurrencyApp.ApiGateway`       | API entry point (Ocelot or custom gateway)                       |
+| Service                                 | Responsibility                                                        |
+|----------------------------------------|------------------------------------------------------------------------|
+| `InsERT.CurrencyApp.WalletService`     | Manages wallets and their balances                                     |
+| `InsERT.CurrencyApp.CurrencyService`   | Periodically fetches and stores exchange rates from NBP                |
+| `InsERT.CurrencyApp.TransactionService`| Handles deposits, withdrawals, and currency conversions                |
+| `InsERT.CurrencyApp.ReportingService`  | Integrates with external systems to confirm and report transactions    |
+| `InsERT.CurrencyApp.ApiGateway`        | Central API entry point (planned: Ocelot or custom gateway)            |
 
 ---
 
 ## 📌 Architecture Overview
 
-You can find the current system architecture diagram on Miro:  
-🔗 [View the Miro board](https://miro.com/welcomeonboard/RFNTVW50bFROSVVURjl5QTEwcVNOWEp6WUNxdGdoWUFVNE5yeU55ZlB4citHc0xGdDVuTFJZVUtHd1M0NVRLc3crRmd4NkJDWSszSGt4bzUwa0VyVHhDQXNpU25ROGdWZVJUL1R6bEFza2ttZU9NTjY0WldMODkwajhNcmRibUt3VHhHVHd5UWtSM1BidUtUYmxycDRnPT0hdjE=?share_link_id=348655454602)
+The current system architecture is available in Miro:  
+🔗 [View Architecture Diagram (Miro)](https://miro.com/welcomeonboard/RFNTVW50bFROSVVURjl5QTEwcVNOWEp6WUNxdGdoWUFVNE5yeU55ZlB4citHc0xGdDVuTFJZVUtHd1M0NVRLc3crRmd4NkJDWSszSGt4bzUwa0VyVHhDQXNpU25ROGdWZVJUL1R6bEFza2ttZU9NTjY0WldMODkwajhNcmRibUt3VHhHVHd5UWtSM1BidUtUYmxycDRnPT0hdjE=?share_link_id=348655454602)
 
 ---
-
 
 ## 🚀 Technologies
 
 - .NET 8 (ASP.NET Core Web API)
 - Docker & Docker Compose
 - EF Core + PostgreSQL
-- CQRS with MediatR (planned)
+- CQRS (with MediatR or custom dispatcher)
 - Polly for HTTP resilience
 - REST API with Swagger
 - Testcontainers for integration testing
-- CI/CD via GitHub Actions (planned)
+- CI/CD with GitHub Actions (planned)
 
 ---
 
 ## 🏁 Getting Started
 
-### Prerequisites:
+### Prerequisites
+
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
-### Run with Docker (recommended):
+### Run the full solution with Docker:
 
 ```bash
 docker compose up --build
 ```
 
+---
+
 ## 🧪 Development Mode
 
-Currently, all microservices run in **`ASPNETCORE_ENVIRONMENT=Development`**.  
-This enables Swagger UI and other dev-only features.
+All services currently run in `ASPNETCORE_ENVIRONMENT=Development` mode, which enables:
+
+- Swagger UI
+- Detailed error pages
+- Dev diagnostics
 
 ---
 
 ## 📘 Swagger & API Testing
 
-When services are running, Swagger UI is enabled and available at:
+When services are running, Swagger UI is available at:
 
 - [`CurrencyService`](http://localhost:5000/swagger/index.html)
+- [`WalletService`](http://localhost:5001/swagger/index.html)
 - (Other services coming soon)
+
+---
 
 # 💱 InsERT.CurrencyApp
 
-**InsERT.CurrencyApp** is a modular microservice system for retrieving and exposing currency exchange rates from the National Bank of Poland (NBP – Table B). The project is designed following modern architectural principles such as **Domain-Driven Design (DDD)**, **CQRS**, **Dependency Injection**, and **containerized integration testing** with **Testcontainers**.
+**InsERT.CurrencyApp** is a domain-driven microservice ecosystem for retrieving and exposing currency exchange rates from NBP Table B, managing wallets, and performing secure transactions. The project emphasizes **Domain-Driven Design (DDD)**, **CQRS**, **Dependency Injection (DI)**, and **containerized testing** using **Testcontainers**.
 
 ---
 
 ## 🧱 Projects
 
-| Project                                   | Description                                                                 |
-|-------------------------------------------|-----------------------------------------------------------------------------|
-| `InsERT.CurrencyApp.CurrencyService`      | Microservice for fetching and storing currency exchange rates (NBP)        |
-| `InsERT.CurrencyApp.CurrencyService.Tests`| Unit and integration tests (including PostgreSQL via Testcontainers)       |
-| `InsERT.CurrencyApp.Abstractions`         | Shared contracts, DTOs, CQRS infrastructure and interfaces                 |
+| Project                                     | Description                                                                 |
+|--------------------------------------------|-----------------------------------------------------------------------------|
+| `InsERT.CurrencyApp.CurrencyService`       | Fetches and stores currency exchange rates                                 |
+| `InsERT.CurrencyApp.WalletService`         | Stores wallet states and balances                                          |
+| `InsERT.CurrencyApp.CurrencyService.Tests` | Unit and integration tests for currency logic                              |
+| `InsERT.CurrencyApp.Abstractions`          | Shared CQRS infrastructure and DTO contracts                               |
 
 ---
 
@@ -87,44 +98,41 @@ When services are running, Swagger UI is enabled and available at:
 
 ### 📦 `InsERT.CurrencyApp.CurrencyService`
 
-| Package                                  | Purpose                                                                   |
-|------------------------------------------|---------------------------------------------------------------------------|
-| `Microsoft.Extensions.DependencyInjection` | Service registration with DI                                              |
-| `Microsoft.Extensions.Hosting`           | Background services like `CurrencyRateFetcher`                            |
-| `Microsoft.Extensions.Http.Polly`        | Resilient HTTP clients with retry policies                                |
-| `Microsoft.AspNetCore.Mvc`               | Web API controllers and attributes                                        |
-| `Microsoft.EntityFrameworkCore`          | Database access via EF Core                                               |
-| `Npgsql.EntityFrameworkCore.PostgreSQL`  | PostgreSQL EF Core provider                                               |
-| `Swashbuckle.AspNetCore`                 | Swagger/OpenAPI UI for API documentation                                  |
+| Package                                    | Purpose                                                                  |
+|--------------------------------------------|--------------------------------------------------------------------------|
+| `Microsoft.EntityFrameworkCore`            | Database access                                                           |
+| `Npgsql.EntityFrameworkCore.PostgreSQL`    | PostgreSQL EF Core provider                                               |
+| `Microsoft.Extensions.Http.Polly`          | HTTP retry policies                                                       |
+| `Swashbuckle.AspNetCore`                   | Swagger UI                                                                |
 
 ### 📦 `InsERT.CurrencyApp.CurrencyService.Tests`
 
 | Package                          | Purpose                                                                   |
 |----------------------------------|---------------------------------------------------------------------------|
 | `xUnit`                          | Unit testing framework                                                    |
-| `Moq`                            | Mocking interfaces like `IQueryDispatcher`                                |
-| `Testcontainers.PostgreSql`      | Running test PostgreSQL database inside Docker containers                 |
-| `Microsoft.EntityFrameworkCore.InMemory` | Lightweight EF Core provider for fast local logic testing                 |
+| `Moq`                            | Interface mocking                                                         |
+| `Testcontainers.PostgreSql`      | Real PostgreSQL container testing                                         |
+| `EF Core InMemory`               | Lightweight local EF Core testing                                         |
 
 ---
 
 ## 🧰 Architectural Patterns
 
-| Pattern / Practice                  | Applied In                                                                |
-|-------------------------------------|----------------------------------------------------------------------------|
-| **Domain-Driven Design (DDD)**      | Domain model (e.g., `ExchangeRate` entity), separation of concerns        |
-| **CQRS**                            | Command/query separation with interfaces like `ICommandHandler`, `IQueryHandler` |
-| **Dependency Injection (DI)**       | Constructor injection and modular service registration via `IServiceCollection` |
-| **Testcontainers**                  | Integration testing with a real PostgreSQL container                       |
-| **Options Pattern**                 | Strongly-typed configuration (e.g., `NbpClientSettings`)                   |
-| **Hosted Services**                 | Background fetch jobs (e.g., `CurrencyRateFetcher`)                        |
+| Pattern                     | Usage Example                                                              |
+|----------------------------|-----------------------------------------------------------------------------|
+| **DDD**                    | Entities: `Wallet`, `ExchangeRate`; strict boundaries per service           |
+| **CQRS**                   | Queries vs Commands, with dedicated handlers and dispatchers                |
+| **DI (Dependency Injection)**| Modular service registration via `IServiceCollection`                     |
+| **Testcontainers**         | PostgreSQL containerized integration tests                                 |
+| **Options Pattern**        | `AppSettings`, `NbpClientSettings`, strongly typed config                  |
+| **Hosted Services**        | Background jobs like currency sync                                          |
 
 ---
 
-## 🚀 Run the Service
+## 🚀 Run CurrencyService Locally
 
 ```bash
-cd InsERT.CurrencyApp/src/InsERT.CurrencyApp.CurrencyService
+cd src/InsERT.CurrencyApp.CurrencyService
 dotnet run
 ```
 
@@ -133,21 +141,24 @@ dotnet run
 ## 🧪 Run Tests
 
 ```bash
-cd InsERT.CurrencyApp/src/InsERT.CurrencyApp.CurrencyService.Tests
+cd src/InsERT.CurrencyApp.CurrencyService.Tests
 dotnet test
 ```
 
 ---
 
-## 📘 Sample Endpoints
+## 📘 Sample API Endpoints
 
-- `GET /rates?date=2025-06-19&code=USD` — fetches exchange rates for a given day and currency code
-- `GET /health/status` — application health status (returns 200/503)
+- `GET /rates?date=2025-06-19&code=USD` – exchange rates by date and code
+- `GET /health/status` – system health (200 / 503)
+- `GET /api/wallet/{userId}/balances` – retrieve wallet balances by user
+- `POST /api/wallet/{userId}/wallets` – create a new wallet for a user
 
 ---
 
-## 🗺 Architecture Overview
+## 📌 Additional Notes
 
-System architecture is documented in Miro:
+- Transaction confirmation logic is handled by `TransactionService` and `ReportingService` (WIP)
+- The system is container-ready and supports Docker-based CI/CD pipelines
 
-🔗 [View Architecture Diagram (Miro)](https://miro.com/welcomeonboard/RFNTVW50bFROSVVURjl5QTEwcVNOWEp6WUNxdGdoWUFVNE5yeU55ZlB4citHc0xGdDVuTFJZVUtHd1M0NVRLc3crRmd4NkJDWSszSGt4bzUwa0VyVHhDQXNpU25ROGdWZVJUL1R6bEFza2ttZU9NTjY0WldMODkwajhNcmRibUt3VHhHVHd5UWtSM1BidUtUYmxycDRnPT0hdjE=?share_link_id=348655454602)
+---
