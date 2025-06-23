@@ -2,8 +2,4 @@
 
 namespace InsERT.CurrencyApp.WalletService.Application.Commands;
 
-public sealed record CreateWalletCommand : ICommand<Guid>
-{
-    public Guid UserId { get; init; }
-    public string Name { get; init; } = default!;
-}
+public sealed record CreateWalletCommand(Guid UserId, string Name) : ICommand<Guid>;

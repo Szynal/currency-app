@@ -8,9 +8,25 @@
 
 	<ItemGroup>
 	  <Compile Remove="Application\Abstractions\**" />
+	  <Compile Remove="Application\Queries\GetWalletBalances\**" />
+	  <Compile Remove="Domain\Enums\**" />
+	  <Compile Remove="Infrastructure\HttpClients\**" />
+	  <Compile Remove="Infrastructure\Resilience\**" />
 	  <Content Remove="Application\Abstractions\**" />
+	  <Content Remove="Application\Queries\GetWalletBalances\**" />
+	  <Content Remove="Domain\Enums\**" />
+	  <Content Remove="Infrastructure\HttpClients\**" />
+	  <Content Remove="Infrastructure\Resilience\**" />
 	  <EmbeddedResource Remove="Application\Abstractions\**" />
+	  <EmbeddedResource Remove="Application\Queries\GetWalletBalances\**" />
+	  <EmbeddedResource Remove="Domain\Enums\**" />
+	  <EmbeddedResource Remove="Infrastructure\HttpClients\**" />
+	  <EmbeddedResource Remove="Infrastructure\Resilience\**" />
 	  <None Remove="Application\Abstractions\**" />
+	  <None Remove="Application\Queries\GetWalletBalances\**" />
+	  <None Remove="Domain\Enums\**" />
+	  <None Remove="Infrastructure\HttpClients\**" />
+	  <None Remove="Infrastructure\Resilience\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -30,13 +46,6 @@
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 		<PackageReference Include="Polly" />
 		<PackageReference Include="Swashbuckle.AspNetCore" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Application\Queries\GetWalletBalances\" />
-		<Folder Include="Domain\Enums\" />
-		<Folder Include="Infrastructure\HttpClients\" />
-		<Folder Include="Infrastructure\Resilience\" />
 	</ItemGroup>
 
 	<ItemGroup>

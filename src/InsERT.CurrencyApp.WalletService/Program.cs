@@ -28,11 +28,9 @@ try
         app.UseSwaggerUI();
     }
 
-    // Optional: Redirect HTTP to HTTPS if enabled later
-    // app.UseHttpsRedirection();
     app.UseRouting();
     app.UseAuthorization();
-    app.UseCors(); 
+    app.UseCors();
     app.MapControllers();
 
     await app.RunAsync();

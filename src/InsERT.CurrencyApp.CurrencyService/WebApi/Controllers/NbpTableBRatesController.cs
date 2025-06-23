@@ -1,6 +1,6 @@
 using InsERT.CurrencyApp.Abstractions.CQRS.Dispatcher;
-using InsERT.CurrencyApp.CurrencyService.Application.ExchangeRates.Models;
-using InsERT.CurrencyApp.CurrencyService.Application.ExchangeRates.Queries;
+using InsERT.CurrencyApp.Abstractions.Currency.Models;
+using InsERT.CurrencyApp.Abstractions.Currency.Queries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InsERT.CurrencyApp.CurrencyService.WebApi.Controllers;

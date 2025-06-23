@@ -1,4 +1,5 @@
-﻿using InsERT.CurrencyApp.WalletService.Application.Commands;
+﻿using InsERT.CurrencyApp.Abstractions.WalletService.DTOs;
+using InsERT.CurrencyApp.WalletService.Application.Commands;
 using InsERT.CurrencyApp.WalletService.Application.DTOs;
 using InsERT.CurrencyApp.WalletService.Application.Queries;
 using InsERT.CurrencyApp.WalletService.WebApi.Controllers;

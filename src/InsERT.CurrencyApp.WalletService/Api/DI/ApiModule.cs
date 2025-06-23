@@ -7,9 +7,8 @@ public static class ApiModule
 {
     public static IServiceCollection AddApi(this IServiceCollection services)
     {
-        services
-            .AddControllers()
-            .AddApplicationPart(typeof(ApiModule).Assembly);
+        services.AddControllers()
+                .AddApplicationPart(typeof(ApiModule).Assembly);
 
         services.AddEndpointsApiExplorer();
 
@@ -22,7 +21,7 @@ public static class ApiModule
                 Description = "API for managing user wallets and their balances",
                 Contact = new OpenApiContact
                 {
-                    Name = "Pawel Szynal",
+                    Name = "Paweł Szynal",
                     Email = "pawel@szynal.info"
                 }
             });

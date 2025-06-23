@@ -18,7 +18,7 @@ public sealed class CreateWalletCommandValidator : AbstractValidator<CreateWalle
             .WithMessage("Wallet name must be at least 3 characters long.")
             .MaximumLength(100)
             .WithMessage("Wallet name must be at most 100 characters long.")
-            .Must(name => !string.IsNullOrWhiteSpace(name))
+            .Must(name => name!.Trim().Length > 0)
             .WithMessage("Wallet name cannot be whitespace.");
     }
 }

@@ -4,10 +4,16 @@ using InsERT.CurrencyApp.WalletService.Application.Behaviors;
 
 namespace InsERT.CurrencyApp.WalletService.Application.Dispatcher;
 
-public sealed class CommandDispatcher(IServiceProvider serviceProvider, IValidationBehavior validator) : ICommandDispatcher
+public sealed class CommandDispatcher : ICommandDispatcher
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private readonly IValidationBehavior _validator = validator;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IValidationBehavior _validator;
+
+    public CommandDispatcher(IServiceProvider serviceProvider, IValidationBehavior validator)
+    {
+        _serviceProvider = serviceProvider;
+        _validator = validator;
+    }
 
     public async Task<TResult> SendAsync<TCommand, TResult>(
         TCommand command,
