@@ -49,6 +49,20 @@ services:
       currency-db:
         condition: service_healthy
 
+  wallet-service:
+    build:
+      context: .
+      dockerfile: src/InsERT.CurrencyApp.WalletService/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5001:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__WalletDb: "Host=wallet-db;Port=5433;Database=walletdb;Username=walletuser;Password=walletpass"
+    depends_on:
+      wallet-db:
+        condition: service_healthy
+
 volumes:
   currencydata:
   walletdata:

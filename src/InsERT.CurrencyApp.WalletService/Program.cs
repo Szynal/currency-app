@@ -1,41 +1,49 @@
-using Microsoft.EntityFrameworkCore;
-using InsERT.CurrencyApp.WalletService.DataAccess;
+using InsERT.CurrencyApp.WalletService.Api.DI;
+using InsERT.CurrencyApp.WalletService.Application.DI;
+using InsERT.CurrencyApp.WalletService.Configuration.DI;
+using InsERT.CurrencyApp.WalletService.Infrastructure;
+using InsERT.CurrencyApp.WalletService.Infrastructure.DataAccess;
+using InsERT.CurrencyApp.WalletService.Infrastructure.DI;
+using Microsoft.Extensions.Options;
 
-namespace InsERT.CurrencyApp.WalletService;
+var builder = WebApplication.CreateBuilder(args);
 
-public class Program
+builder.Services
+    .AddConfiguration(builder.Configuration)
+    .AddInfrastructure()
+    .AddApplication()
+    .AddApi();
+
+var app = builder.Build();
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+try
 {
-    public static void Main(string[] args)
+    await DbInitializer.EnsureDatabaseMigratedAsync<WalletDbContext>(app.Services, logger);
+
+    if (app.Environment.IsDevelopment())
     {
-        var builder = WebApplication.CreateBuilder(args);
-
-        builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
-        builder.Services.AddDbContext<WalletDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("WalletDb")));
-
-        var app = builder.Build();
-
-        using (var scope = app.Services.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<WalletDbContext>();
-            dbContext.Database.Migrate(); 
-        }
-
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        //app.UseHttpsRedirection();
-
-        app.UseAuthorization();
-
-        app.MapControllers();
-
-        app.Run();
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
+
+    // Optional: Redirect HTTP to HTTPS if enabled later
+    // app.UseHttpsRedirection();
+    app.UseRouting();
+    app.UseAuthorization();
+    app.UseCors(); 
+    app.MapControllers();
+
+    await app.RunAsync();
+}
+catch (OptionsValidationException ex)
+{
+    logger.LogCritical("Configuration validation failed:\n - {Failures}", string.Join("\n - ", ex.Failures));
+    Environment.Exit(1);
+}
+catch (Exception ex)
+{
+    logger.LogCritical(ex, "Startup error");
+    Environment.Exit(1);
 }

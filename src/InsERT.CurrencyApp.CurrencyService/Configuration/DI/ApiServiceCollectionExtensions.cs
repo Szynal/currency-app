@@ -1,4 +1,6 @@
-﻿namespace InsERT.CurrencyApp.CurrencyService.Configuration.DI;
+﻿using Microsoft.OpenApi.Models;
+
+namespace InsERT.CurrencyApp.CurrencyService.Configuration.DI;
 
 public static class ApiServiceCollectionExtensions
 {
@@ -18,7 +20,14 @@ public static class ApiServiceCollectionExtensions
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "Currency Service API",
+                Version = "v1"
+            });
+        });
 
         return services;
     }

@@ -1,6 +1,16 @@
-@InsERT.CurrencyApp.WalletService_HostAddress = http://localhost:5052
+@WalletService_Host = http://localhost:5052
+@UserId = 00000000-0000-0000-0000-000000000001
 
-GET {{InsERT.CurrencyApp.WalletService_HostAddress}}/weatherforecast/
+### Get balances for a user
+GET {{WalletService_Host}}/api/wallet/{{UserId}}/balances
 Accept: application/json
 
 ###
+
+### Create a wallet
+POST {{WalletService_Host}}/api/wallet/{{UserId}}/wallets
+Content-Type: application/json
+
+{
+  "name": "My new wallet"
+}
