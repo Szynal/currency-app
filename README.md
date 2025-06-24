@@ -6,7 +6,7 @@
 ## 1.  W jaki sposób (z użyciem jakich usług) aplikacja mogłaby być wdrożona w platformę Azure:
 
 **Odpowiedz** 
-Aplikacja została zbudowana w architekturze mikroserwisowej i już teraz działa w środowisku kontenerowym, co znacznie ułatwia wdrożenie jej do platformy Azure. Korzystamy z niezależnych usług (m.in. wallet-service, transaction-service, currency-service) oraz trzech instancji baz danych PostgreSQL (dla każdego mikroserwisu osobno). Całość uruchamiana jest za pomocą kontenerów Docker.
+Aplikacja została zbudowana w architekturze mikroserwisowej i już teraz działa w środowisku kontenerowym, co znacznie ułatwia wdrożenie jej do platformy Azure. Korzystam z niezależnych usług (m.in. wallet-service, transaction-service, currency-service) oraz trzech instancji baz danych PostgreSQL (dla każdego mikroserwisu osobno). Całość uruchamiana jest za pomocą kontenerów Docker.
 
 Dodatkowo, system przetwarza transakcje w tle, korzystając z background service, który loguje liczbę oczekujących transakcji (np. Found {Count} pending transactions.), co pozwala na pełną kontrolę nad obciążeniem i przetwarzaniem danych.
 
