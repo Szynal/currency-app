@@ -15,7 +15,6 @@ public class WalletDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Automatyczne zastosowanie konfiguracji z całego assembly
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(WalletDbContext).Assembly);
     }
 }

@@ -26,36 +26,33 @@ public class WalletController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost("{userId}/wallets")]
+
+    [HttpPost("create-wallet/{userId}")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateWallet(Guid userId, [FromBody] CreateWalletRequest request)
     {
         var command = new CreateWalletCommand(userId, request.Name);
         var walletId = await _commandDispatcher.SendAsync<CreateWalletCommand, Guid>(command);
 
-        return CreatedAtAction(nameof(GetWalletBalances), new { userId }, walletId);
+        return StatusCode(StatusCodes.Status201Created, walletId);
     }
 
-    [HttpGet("{userId}/balances")]
-    [ProducesResponseType(typeof(IEnumerable<WalletBalanceDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetWalletBalances(Guid userId)
-    {
-        var query = new GetWalletBalancesQuery(userId);
-        var balances = await _queryDispatcher.QueryAsync<GetWalletBalancesQuery, IReadOnlyCollection<WalletBalanceDto>>(query);
 
-        return Ok(balances);
-    }
-
-    [HttpPost("{walletId}/balances")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> AddBalance(Guid walletId, [FromBody] AddBalanceRequest request)
+    [HttpGet("user-wallets/{userId}")]
+    [ProducesResponseType(typeof(UserWalletsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserWalletsDto>> GetUserWallets(Guid userId, CancellationToken cancellationToken)
     {
-        var command = new AddWalletBalanceCommand(walletId, request.CurrencyCode, request.InitialAmount);
-        await _commandDispatcher.SendAsync<AddWalletBalanceCommand, Unit>(command);
-        return Ok();
+        var result = await _queryDispatcher.QueryAsync<GetUserWalletsQuery, UserWalletsDto>(
+            new GetUserWalletsQuery(userId),
+            cancellationToken
+        );
+
+        return Ok(result);
     }
 
     [HttpPost("apply-transaction")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ApplyTransaction([FromBody] ApplyTransactionRequest request)
@@ -90,7 +87,7 @@ public class WalletController : ControllerBase
             {
                 Error = "Transaction failed.",
                 ExceptionMessage = ex.Message,
-                StackTrace = ex.StackTrace
+                ex.StackTrace
             });
         }
     }

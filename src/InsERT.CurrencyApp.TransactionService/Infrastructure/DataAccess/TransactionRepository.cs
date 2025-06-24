@@ -21,6 +21,15 @@ public class TransactionRepository(TransactionDbContext dbContext) : ITransactio
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyCollection<Transaction>> GetPendingTransactionsAsync(int limit, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Transactions
+            .Where(t => t.Status == TransactionStatus.Pending)
+            .OrderBy(t => t.CreatedAt)
+            .Take(limit)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task AddAsync(Transaction transaction, CancellationToken cancellationToken = default)
     {
         await _dbContext.Transactions.AddAsync(transaction, cancellationToken);
@@ -36,12 +45,4 @@ public class TransactionRepository(TransactionDbContext dbContext) : ITransactio
     {
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
-
-    public async Task<IReadOnlyCollection<Transaction>> GetPendingTransactionsAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.Transactions
-            .Where(t => t.Status == TransactionStatus.Pending)
-            .ToListAsync(cancellationToken);
-    }
-
 }

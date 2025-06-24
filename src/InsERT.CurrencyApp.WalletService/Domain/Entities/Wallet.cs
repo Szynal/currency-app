@@ -6,7 +6,7 @@ public class Wallet
     public Guid UserId { get; private set; }
     public string Name { get; private set; } = null!;
 
-    private readonly List<WalletBalance> _balances = new();
+    private readonly List<WalletBalance> _balances = [];
     public IReadOnlyCollection<WalletBalance> Balances => _balances.AsReadOnly();
 
     private Wallet() { }

@@ -42,4 +42,13 @@ public sealed class WalletRepository : IWalletRepository
     {
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<List<Wallet>> GetByUserIdAsync(Guid userId)
+    {
+        return await _dbContext.Wallets
+            .Include(w => w.Balances)
+            .Where(w => w.UserId == userId)
+            .ToListAsync();
+    }
+
 }

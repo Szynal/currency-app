@@ -17,19 +17,15 @@ public static class ApplicationModule
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        // Dispatchery CQRS
         services.AddScoped<ICommandDispatcher, CommandDispatcher>();
         services.AddScoped<IQueryDispatcher, QueryDispatcher>();
 
-        // Command Handlers
         services.AddScoped<ICommandHandler<CreateWalletCommand, Guid>, CreateWalletCommandHandler>();
         services.AddScoped<ICommandHandler<ApplyWalletTransactionCommand, Unit>, ApplyWalletTransactionCommandHandler>();
-
-        // Query Handlers
-        services.AddScoped<IQueryHandler<GetWalletBalancesQuery, IReadOnlyCollection<WalletBalanceDto>>, GetWalletBalancesQueryHandler>();
         services.AddScoped<ICommandHandler<AddWalletBalanceCommand, Unit>, AddWalletBalanceCommandHandler>();
 
-        // Validation
+        services.AddScoped<IQueryHandler<GetUserWalletsQuery, UserWalletsDto>, GetUserWalletsHandler>();
+
         services.AddScoped<IValidationBehavior, ValidationBehavior>();
         services.AddValidatorsFromAssemblyContaining<CreateWalletCommandValidator>();
 

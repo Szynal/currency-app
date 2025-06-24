@@ -1,4 +1,7 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using InsERT.CurrencyApp.TransactionService.Application.Validators;
+using Microsoft.OpenApi.Models;
 
 namespace InsERT.CurrencyApp.TransactionService.Configuration.DI;
 
@@ -18,7 +21,8 @@ public static class ApiServiceCollectionExtensions
         });
 
         services.AddControllers();
-
+        services.AddValidatorsFromAssemblyContaining<CreateDepositCommandValidator>();
+        services.AddFluentValidationAutoValidation();
         services.AddEndpointsApiExplorer();
 
         services.AddSwaggerGen(options =>

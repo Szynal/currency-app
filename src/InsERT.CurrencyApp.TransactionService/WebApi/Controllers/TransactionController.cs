@@ -3,7 +3,6 @@ using InsERT.CurrencyApp.Abstractions.CQRS.Dispatcher;
 using InsERT.CurrencyApp.TransactionService.Application.Commands;
 using InsERT.CurrencyApp.TransactionService.WebApi.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace InsERT.CurrencyApp.TransactionService.WebApi.Controllers;
 
@@ -15,18 +14,13 @@ public class TransactionController(ICommandDispatcher commandDispatcher, ILogger
     private readonly ILogger<TransactionController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     [HttpPost("deposit")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesDefaultResponseType]
     public async Task<IActionResult> Deposit([FromBody] CreateDepositRequest request)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        var command = new ApplyTransactionCommand(
-            WalletId: request.WalletId,
-            Type: Domain.Entities.TransactionType.Deposit,
-            Amount: request.Amount,
-            CurrencyCode: request.CurrencyCode);
-
-        await _commandDispatcher.SendAsync<ApplyTransactionCommand, Unit>(command);
+        var command = new CreateDepositCommand(request.WalletId, request.CurrencyCode, request.Amount);
+        await _commandDispatcher.SendAsync<CreateDepositCommand, Unit>(command);
 
         _logger.LogInformation("Deposit command sent for WalletId {WalletId}, Amount {Amount} {CurrencyCode}",
             request.WalletId, request.Amount, request.CurrencyCode);
@@ -35,18 +29,13 @@ public class TransactionController(ICommandDispatcher commandDispatcher, ILogger
     }
 
     [HttpPost("withdraw")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesDefaultResponseType]
     public async Task<IActionResult> Withdraw([FromBody] CreateWithdrawRequest request)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        var command = new ApplyTransactionCommand(
-            WalletId: request.WalletId,
-            Type: Domain.Entities.TransactionType.Withdraw,
-            Amount: request.Amount,
-            CurrencyCode: request.CurrencyCode);
-
-        await _commandDispatcher.SendAsync<ApplyTransactionCommand, Unit>(command);
+        var command = new CreateWithdrawCommand(request.WalletId, request.CurrencyCode, request.Amount);
+        await _commandDispatcher.SendAsync<CreateWithdrawCommand, Unit>(command);
 
         _logger.LogInformation("Withdraw command sent for WalletId {WalletId}, Amount {Amount} {CurrencyCode}",
             request.WalletId, request.Amount, request.CurrencyCode);
@@ -55,23 +44,21 @@ public class TransactionController(ICommandDispatcher commandDispatcher, ILogger
     }
 
     [HttpPost("convert")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesDefaultResponseType]
     public async Task<IActionResult> ConvertCurrency([FromBody] CreateConvertRequest request)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        var command = new CreateConversionCommand(
+            request.WalletId,
+            request.SourceCurrencyCode,
+            request.SourceAmount,
+            request.TargetCurrencyCode);
 
-        var command = new ApplyTransactionCommand(
-            WalletId: request.WalletId,
-            Type: Domain.Entities.TransactionType.ConvertCurrency,
-            Amount: request.SourceAmount,
-            CurrencyCode: request.SourceCurrencyCode,
-            ConvertedAmount: request.TargetAmount,
-            ConvertedCurrencyCode: request.TargetCurrencyCode);
+        await _commandDispatcher.SendAsync<CreateConversionCommand, Unit>(command);
 
-        await _commandDispatcher.SendAsync<ApplyTransactionCommand, Unit>(command);
-
-        _logger.LogInformation("ConvertCurrency command sent for WalletId {WalletId}, SourceAmount {SourceAmount} {SourceCurrencyCode} to TargetAmount {TargetAmount} {TargetCurrencyCode}",
-            request.WalletId, request.SourceAmount, request.SourceCurrencyCode, request.TargetAmount, request.TargetCurrencyCode);
+        _logger.LogInformation("ConvertCurrency command sent for WalletId {WalletId}, SourceAmount {SourceAmount} {SourceCurrencyCode} to {TargetCurrencyCode}",
+            request.WalletId, request.SourceAmount, request.SourceCurrencyCode, request.TargetCurrencyCode);
 
         return Accepted();
     }

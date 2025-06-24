@@ -4,4 +4,6 @@ namespace InsERT.CurrencyApp.TransactionService.Infrastructure.Clients;
 public interface ICurrencyServiceClient
 {
     Task<IEnumerable<ExchangeRateDto>> GetExchangeRatesAsync(DateOnly? date, string? code, CancellationToken cancellationToken);
+
+    Task<HashSet<string>> GetAvailableCurrencyCodesAsync(CancellationToken cancellationToken = default);
 }

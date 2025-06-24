@@ -1,12 +1,13 @@
 ﻿using InsERT.CurrencyApp.Abstractions.CQRS;
 using InsERT.CurrencyApp.Abstractions.CQRS.Commands;
+using InsERT.CurrencyApp.Abstractions.CQRS.Queries;
+using InsERT.CurrencyApp.Abstractions.Currency.Queries;
 using InsERT.CurrencyApp.TransactionService.Application.Commands;
 using InsERT.CurrencyApp.TransactionService.Application.Commands.Handlers;
 using InsERT.CurrencyApp.TransactionService.Domain;
 using InsERT.CurrencyApp.TransactionService.Domain.Repositories;
 using InsERT.CurrencyApp.TransactionService.Infrastructure.Clients;
 using InsERT.CurrencyApp.TransactionService.Infrastructure.DataAccess;
-using InsERT.CurrencyApp.TransactionService.Infrastructure.HostedServices;
 using Microsoft.EntityFrameworkCore;
 
 namespace InsERT.CurrencyApp.TransactionService.Infrastructure.DI;
@@ -43,6 +44,10 @@ public static class InfrastructureModule
         });
 
         services.AddScoped<ICommandHandler<ApplyTransactionCommand, Unit>, ApplyTransactionCommandHandler>();
+        services.AddScoped<ICommandHandler<CreateConversionCommand, Unit>, CreateConversionCommandHandler>();
+
+        services.AddScoped<IQueryHandler<GetExchangeRatesQuery, IEnumerable<Abstractions.Currency.Models.ExchangeRateDto>>,
+                          GetExchangeRatesQueryHandler>();
 
         return services;
     }

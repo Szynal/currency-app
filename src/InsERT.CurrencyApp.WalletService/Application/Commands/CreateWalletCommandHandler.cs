@@ -4,14 +4,9 @@ using InsERT.CurrencyApp.WalletService.Domain.Repositories;
 
 namespace InsERT.CurrencyApp.WalletService.Application.Commands;
 
-public sealed class CreateWalletCommandHandler : ICommandHandler<CreateWalletCommand, Guid>
+public sealed class CreateWalletCommandHandler(IWalletRepository walletRepository) : ICommandHandler<CreateWalletCommand, Guid>
 {
-    private readonly IWalletRepository _walletRepository;
-
-    public CreateWalletCommandHandler(IWalletRepository walletRepository)
-    {
-        _walletRepository = walletRepository;
-    }
+    private readonly IWalletRepository _walletRepository = walletRepository ?? throw new ArgumentNullException(nameof(walletRepository));
 
     public async Task<Guid> HandleAsync(CreateWalletCommand command, CancellationToken cancellationToken = default)
     {
@@ -26,7 +21,7 @@ public sealed class CreateWalletCommandHandler : ICommandHandler<CreateWalletCom
                 $"A wallet named '{command.Name}' already exists for user '{command.UserId}'.");
         }
 
-        var wallet = Wallet.Create(command.UserId, command.Name, new[] { ("MGA", 100.0m), ("PLN", 3m) });
+        var wallet = Wallet.Create(command.UserId, command.Name);
 
         await _walletRepository.AddAsync(wallet, cancellationToken);
         await _walletRepository.SaveChangesAsync(cancellationToken);

@@ -3,15 +3,15 @@ using InsERT.CurrencyApp.TransactionService.Configuration.DI;
 using InsERT.CurrencyApp.TransactionService.Infrastructure.DataAccess;
 using InsERT.CurrencyApp.TransactionService.Infrastructure.DI;
 using InsERT.CurrencyApp.TransactionService.Migrations;
+using InsERT.CurrencyApp.TransactionService.WebApi.Middleware;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services
     .AddConfiguration(builder.Configuration)
     .AddInfrastructure(builder.Configuration)
-    .AddApplication()
+    .AddApplication(builder.Configuration)
     .AddApi()
     .AddHostedJobs();
 
@@ -29,10 +29,9 @@ try
         app.UseSwaggerUI();
     }
 
-    // app.UseHttpsRedirection();
-
-    app.UseAuthorization();
     app.UseCors();
+    app.UseMiddleware<ValidationExceptionMiddleware>();
+    app.UseAuthorization();
     app.MapControllers();
 
     await app.RunAsync();

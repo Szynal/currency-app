@@ -32,4 +32,20 @@ public class CurrencyServiceHttpClient(HttpClient httpClient, ILogger<CurrencySe
             return [];
         }
     }
+
+    public async Task<HashSet<string>> GetAvailableCurrencyCodesAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var codes = await _httpClient.GetFromJsonAsync<List<string>>("/nbp/table-b/codes", _jsonOptions, cancellationToken);
+            return codes?.ToHashSet(StringComparer.OrdinalIgnoreCase) ?? [];
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching currency codes from CurrencyService.");
+            return [];
+        }
+    }
+
+
 }
