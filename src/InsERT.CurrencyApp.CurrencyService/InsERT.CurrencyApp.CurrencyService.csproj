@@ -21,6 +21,8 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\InsERT.CurrencyApp.Abstractions\InsERT.CurrencyApp.Abstractions.csproj" />
+	  <ProjectReference Include="..\InsERT.CurrencyApp.ReportingService\InsERT.CurrencyApp.ReportingService.csproj" />
+	  <ProjectReference Include="..\InsERT.CurrencyApp.WalletService\InsERT.CurrencyApp.WalletService.csproj" />
 	</ItemGroup>
 
 </Project>
