@@ -25,4 +25,8 @@
     <ProjectReference Include="..\..\src\InsERT.CurrencyApp.WalletService\InsERT.CurrencyApp.WalletService.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
 </Project>
