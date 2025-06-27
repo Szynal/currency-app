@@ -188,7 +188,7 @@ When running locally:
 
 ## 📃 Sample API Endpoints
 
-- `GET /nbp/table-b/rates?date=2025-06-19&code=USD` – get exchange rate
+- `GET /nbp/table-b/rates?date=2025-06-19&code=BAM` – get exchange rate
 - `GET /nbp/table-b/codes` – get list of supported currency codes
 - `POST /api/transaction/deposit` – deposit funds into a wallet
 - `POST /api/transaction/withdraw` – withdraw funds
