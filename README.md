@@ -192,7 +192,7 @@ When running locally:
 - `GET /nbp/table-b/codes` – get list of supported currency codes
 - `POST /api/transaction/deposit` – deposit funds into a wallet
 - `POST /api/transaction/withdraw` – withdraw funds
-- `POST /api/transaction/convert` – convert currency (e.g. USD → EUR)
+- `POST /api/transaction/convert` – convert currency
 
 ---
 
